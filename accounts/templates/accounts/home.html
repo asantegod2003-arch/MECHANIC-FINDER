@@ -1,0 +1,376 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<section class="hero py-5">
+
+    <div class="container">
+
+        <div class="row align-items-center">
+
+            <div class="col-lg-6">
+
+                <h1 class="display-4 fw-bold text-success">
+                    Find Trusted Mechanics Near You
+                </h1>
+
+                <p class="lead mt-4">
+                    Whether you're stranded on the road or need a reliable
+                    mechanic, Mechanic Finder connects you with trusted
+                    professionals quickly and easily.
+                </p>
+
+                <div class="mt-4">
+
+                    {% if user.is_authenticated and user.profile.role == "customer" %}
+                        <a href="{% url 'create_request' %}" class="btn btn-success btn-lg me-3">
+                            Request Rescue
+                        </a>
+                    {% else %}
+                        <a href="{% url 'signup' %}" class="btn btn-success btn-lg me-3">
+                            Request Rescue
+                        </a>
+                    {% endif %}
+
+                    <a href="{% url 'signup' %}" class="btn btn-outline-success btn-lg">
+                        Become a Mechanic
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-6 text-center">
+
+                <img src="{% static 'images/hero.png' %}"
+                     class="img-fluid"
+                     alt="Mechanic">
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="py-5 bg-light">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <h2 class="fw-bold text-success">
+                How It Works
+            </h2>
+
+            <p class="text-muted">
+                Getting roadside assistance is simple and fast.
+            </p>
+
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="card step-card text-center border-0 shadow-sm h-100">
+
+                    <div class="card-body">
+
+                        <div class="step-number">1</div>
+
+                        <i class="bi bi-phone-fill step-icon"></i>
+
+                        <h4>Request Help</h4>
+
+                        <p>
+                            Submit your roadside assistance request through the platform.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="card step-card text-center border-0 shadow-sm h-100">
+
+                    <div class="card-body">
+
+                        <div class="step-number">2</div>
+
+                        <i class="bi bi-person-check-fill step-icon"></i>
+
+                        <h4>Mechanic Accepts</h4>
+
+                        <p>
+                            A nearby mechanic receives and accepts your request.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="card step-card text-center border-0 shadow-sm h-100">
+
+                    <div class="card-body">
+
+                        <div class="step-number">3</div>
+
+                        <i class="bi bi-car-front-fill step-icon"></i>
+
+                        <h4>Receive Help</h4>
+
+                        <p>
+                            The mechanic arrives and assists you with your vehicle.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="card step-card text-center border-0 shadow-sm h-100">
+
+                    <div class="card-body">
+
+                        <div class="step-number">4</div>
+
+                        <i class="bi bi-geo-alt-fill step-icon"></i>
+
+                        <h4>Track Live</h4>
+
+                        <p>
+                            Follow the mechanic on the map until they reach you.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section id="services" class="py-5">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <h2 class="fw-bold text-success">
+                Our Services
+            </h2>
+
+            <p class="text-muted">
+                We provide fast and reliable roadside assistance whenever you need it.
+            </p>
+
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="card service-card h-100 shadow-sm border-0">
+
+                    <div class="card-body text-center">
+
+                        <i class="bi bi-tools service-icon"></i>
+
+                        <h4 class="mt-3">
+                            Vehicle Repair
+                        </h4>
+
+                        <p>
+                            Connect with experienced mechanics for quick vehicle repairs.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="card service-card h-100 shadow-sm border-0">
+
+                    <div class="card-body text-center">
+
+                        <i class="bi bi-battery-charging service-icon"></i>
+
+                        <h4 class="mt-3">
+                            Battery Jump Start
+                        </h4>
+
+                        <p>
+                            Get help when your vehicle battery is completely drained.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="card service-card h-100 shadow-sm border-0">
+
+                    <div class="card-body text-center">
+
+                        <i class="bi bi-circle service-icon"></i>
+
+                        <h4 class="mt-3">
+                            Tire Replacement
+                        </h4>
+
+                        <p>
+                            Find nearby mechanics to replace or repair damaged tires.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+
+                <div class="card service-card h-100 shadow-sm border-0">
+
+                    <div class="card-body text-center">
+
+                        <i class="bi bi-fuel-pump service-icon"></i>
+
+                        <h4 class="mt-3">
+                            Fuel Delivery
+                        </h4>
+
+                        <p>
+                            Receive emergency fuel delivery wherever you are.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section id="about" class="py-5 bg-light">
+
+    <div class="container">
+
+        <div class="text-center mb-5">
+
+            <h2 class="fw-bold text-success">
+                Why Choose Mechanic Finder?
+            </h2>
+
+            <p class="text-muted">
+                We are committed to providing reliable, fast, and professional roadside assistance.
+            </p>
+
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+
+                <div class="card feature-card h-100 border-0 shadow-sm">
+
+                    <div class="card-body text-center">
+
+                        <i class="bi bi-patch-check-fill feature-icon"></i>
+
+                        <h4 class="mt-3">
+                            Verified Mechanics
+                        </h4>
+
+                        <p>
+                            Every mechanic is verified before joining our platform, ensuring quality service.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <div class="card feature-card h-100 border-0 shadow-sm">
+
+                    <div class="card-body text-center">
+
+                        <i class="bi bi-lightning-charge-fill feature-icon"></i>
+
+                        <h4 class="mt-3">
+                            Fast Response
+                        </h4>
+
+                        <p>
+                            Quickly connect with nearby mechanics during emergencies.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-4">
+
+                <div class="card feature-card h-100 border-0 shadow-sm">
+
+                    <div class="card-body text-center">
+
+                        <i class="bi bi-geo-alt-fill feature-icon"></i>
+
+                        <h4 class="mt-3">
+                            Easy Location
+                        </h4>
+
+                        <p>
+                            Easily locate mechanics close to your current location.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-7">
+
+            <div class="card shadow border-0 rounded-4">
+
+                <div class="card-body p-4 p-md-5">
+
+                    <h2 class="text-success fw-bold mb-2">
+                        Request Rescue
+                    </h2>
+
+                    <p class="text-muted">
+                        Tell us what happened and share your location so a mechanic can find you.
+                    </p>
+
+                    <div id="gps-status" class="alert alert-info">
+                        Detecting your GPS location...
+                    </div>
+
+                    <form method="POST" id="rescue-form">
+
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label class="form-label" for="id_vehicle_problem">
+                                Vehicle problem
+                            </label>
+                            {{ form.vehicle_problem }}
+                            {{ form.vehicle_problem.errors }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="id_location">
+                                Location
+                            </label>
+                            {{ form.location }}
+                            {{ form.location.errors }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="id_phone_number">
+                                Phone number
+                            </label>
+                            {{ form.phone_number }}
+                            {{ form.phone_number.errors }}
+                        </div>
+
+                        {{ form.customer_latitude }}
+                        {{ form.customer_longitude }}
+
+                        <button type="submit" class="btn btn-success">
+                            Submit Request
+                        </button>
+
+                        <a href="{% url 'customer_dashboard' %}" class="btn btn-outline-secondary ms-2">
+                            Cancel
+                        </a>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+(function () {
+    const latField = document.getElementById("id_customer_latitude");
+    const lngField = document.getElementById("id_customer_longitude");
+    const statusBox = document.getElementById("gps-status");
+
+    if (!navigator.geolocation) {
+        statusBox.className = "alert alert-warning";
+        statusBox.textContent = "GPS is not supported. Enter your location as text.";
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        function (position) {
+            latField.value = position.coords.latitude;
+            lngField.value = position.coords.longitude;
+            statusBox.className = "alert alert-success";
+            statusBox.textContent = "Location captured. You can submit your request.";
+        },
+        function () {
+            statusBox.className = "alert alert-warning";
+            statusBox.textContent = "Could not get GPS. Enter your town, landmark or street so a mechanic can still find you.";
+        }
+    );
+})();
+</script>
+
+{% endblock %}

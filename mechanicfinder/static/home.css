@@ -1,0 +1,99 @@
+.hero{
+    padding:80px 0;
+}
+
+.hero h1{
+    line-height:1.2;
+}
+
+.hero img{
+    max-width:100%;
+    border-radius:20px;
+}
+/* ===========================
+   SERVICES
+=========================== */
+
+.service-card{
+    transition:0.3s;
+    border-radius:15px;
+}
+
+.service-card:hover{
+    transform:translateY(-10px);
+}
+
+.service-icon{
+    font-size:60px;
+    color:#198754;
+}
+
+.service-card h4{
+    margin-top:15px;
+    font-weight:600;
+}
+
+.service-card p{
+    color:#6c757d;
+}
+/* ===========================
+   WHY CHOOSE US
+=========================== */
+
+.feature-card{
+    border-radius:15px;
+    transition:0.3s;
+}
+
+.feature-card:hover{
+    transform:translateY(-10px);
+}
+
+.feature-icon{
+    font-size:60px;
+    color:#198754;
+}
+/* ===========================
+   HOW IT WORKS
+=========================== */
+
+.step-card{
+    border-radius:15px;
+    transition:0.3s;
+    position:relative;
+}
+
+.step-card:hover{
+    transform:translateY(-10px);
+}
+
+.step-number{
+
+    width:45px;
+    height:45px;
+
+    background:#198754;
+    color:white;
+
+    border-radius:50%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-weight:bold;
+
+    margin:0 auto 20px;
+}
+
+.step-icon{
+
+    font-size:55px;
+
+    color:#198754;
+
+    margin-bottom:20px;
+
+}

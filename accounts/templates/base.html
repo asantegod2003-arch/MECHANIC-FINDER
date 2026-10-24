@@ -1,0 +1,394 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mechanic Finder</title>
+
+
+    <!-- Google Font -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+
+    <!-- Bootstrap CSS -->
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <!-- Bootstrap Icons -->
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+
+    <!-- Custom CSS -->
+
+    <link rel="stylesheet" href="{% static 'base.css' %}">
+
+    <link rel="stylesheet" href="{% static 'home.css' %}">
+
+
+</head>
+
+
+<body>
+
+
+<!-- ==========================
+        NAVIGATION BAR
+=========================== -->
+
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm">
+
+
+    <div class="container">
+
+
+        <!-- Logo -->
+
+        <a class="navbar-brand fw-bold fs-3" href="{% url 'home' %}">
+
+            🚗 Mechanic Finder
+
+        </a>
+
+
+
+        <!-- Mobile Menu Button -->
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbar">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+
+
+
+        <div class="collapse navbar-collapse" id="navbar">
+
+
+
+            <!-- Navigation Links -->
+
+            <ul class="navbar-nav mx-auto">
+
+
+                <li class="nav-item">
+
+                    <a class="nav-link" href="{% url 'home' %}">
+
+                        Home
+
+                    </a>
+
+                </li>
+
+
+
+                <li class="nav-item">
+
+                    <a class="nav-link" href="#about">
+
+                        About
+
+                    </a>
+
+                </li>
+
+
+
+                <li class="nav-item">
+
+                    <a class="nav-link" href="#services">
+
+                        Services
+
+                    </a>
+
+                </li>
+
+
+            </ul>
+
+
+
+
+            <!-- Right Side -->
+
+            <div class="d-flex align-items-center">
+
+
+
+                {% if user.is_authenticated %}
+
+
+
+                    <span class="text-white me-3">
+
+
+                        <i class="bi bi-person-circle"></i>
+
+
+                        Welcome,
+                        {{ user.first_name|default:user.username }}
+
+
+                    </span>
+
+
+
+
+                    <!-- Customer Dashboard -->
+
+
+                    {% if user.profile.role == "customer" %}
+
+
+                        <a href="{% url 'customer_dashboard' %}"
+                           class="btn btn-light me-2">
+
+
+                            <i class="bi bi-speedometer2"></i>
+
+                            Dashboard
+
+
+                        </a>
+
+
+
+                    {% endif %}
+
+
+
+
+
+                    <!-- Mechanic Dashboard -->
+
+
+                    {% if user.profile.role == "mechanic" %}
+
+
+                        <a href="{% url 'mechanic_dashboard' %}"
+                           class="btn btn-light me-2">
+
+
+                            <i class="bi bi-tools"></i>
+
+                            Dashboard
+
+
+                        </a>
+
+
+
+                    {% endif %}
+
+
+
+
+
+
+                    <!-- Logout -->
+
+
+                    <a href="{% url 'logout' %}"
+                       class="btn btn-danger">
+
+
+                        <i class="bi bi-box-arrow-right"></i>
+
+                        Logout
+
+
+                    </a>
+
+
+
+
+
+                {% else %}
+
+
+
+                    <a href="{% url 'login' %}"
+                       class="btn btn-light me-2">
+
+
+                        Login
+
+
+                    </a>
+
+
+
+
+
+                    <a href="{% url 'signup' %}"
+                       class="btn btn-outline-light">
+
+
+                        Sign Up
+
+
+                    </a>
+
+
+
+
+                {% endif %}
+
+
+
+
+            </div>
+
+
+
+        </div>
+
+
+    </div>
+
+
+</nav>
+
+
+
+
+
+<!-- ==========================
+        PAGE CONTENT
+=========================== -->
+
+
+<main class="container py-4">
+
+
+
+    <!-- Messages -->
+
+
+    {% if messages %}
+
+
+        {% for message in messages %}
+
+
+
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm"
+                 role="alert">
+
+
+                {{ message }}
+
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+
+
+                </button>
+
+
+
+            </div>
+
+
+
+        {% endfor %}
+
+
+
+    {% endif %}
+
+
+
+
+
+
+    {% block content %}
+
+
+
+    {% endblock %}
+
+
+
+
+
+</main>
+
+
+
+
+
+
+<!-- ==========================
+        FOOTER
+=========================== -->
+
+
+<footer class="bg-dark text-white text-center py-4 mt-5">
+
+
+    <div class="container">
+
+
+
+        <p class="mb-1">
+
+            © 2026 <strong>Mechanic Finder</strong>.
+            All Rights Reserved.
+
+        </p>
+
+
+
+        <small>
+
+            Fast • Reliable • Trusted Roadside Assistance
+
+        </small>
+
+
+
+    </div>
+
+
+</footer>
+
+
+
+
+
+
+<!-- Bootstrap JavaScript -->
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+</body>
+
+
+</html>

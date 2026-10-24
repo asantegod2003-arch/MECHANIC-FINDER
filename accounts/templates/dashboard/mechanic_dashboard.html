@@ -1,0 +1,384 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+        <div>
+
+            <h2 class="text-success mb-1">
+                Mechanic Dashboard
+            </h2>
+
+            <p class="mb-0">
+                Welcome, <strong>{{ user.username }}</strong>
+            </p>
+
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="toggle_available" value="1">
+            {% if profile.available %}
+                <button type="submit" class="btn btn-outline-danger">
+                    Go Offline
+                </button>
+            {% else %}
+                <button type="submit" class="btn btn-success">
+                    Go Online
+                </button>
+            {% endif %}
+        </form>
+
+    </div>
+
+    {% if profile.available %}
+        <div class="alert alert-success mt-3">
+            You are online. New rescue requests will appear below.
+        </div>
+    {% else %}
+        <div class="alert alert-warning mt-3">
+            You are offline. Go online to receive new jobs.
+        </div>
+    {% endif %}
+
+    <hr>
+
+    <h4 class="mt-4">
+        Available Rescue Requests
+    </h4>
+
+    {% if available_requests %}
+
+    <table class="table table-bordered table-hover">
+
+        <thead class="table-success">
+            <tr>
+                <th>Customer</th>
+                <th>Problem</th>
+                <th>Location</th>
+                <th>Phone</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        {% for request in available_requests %}
+
+            <tr>
+
+                <td>{{ request.customer.username }}</td>
+
+                <td>{{ request.vehicle_problem }}</td>
+
+                <td>{{ request.location }}</td>
+
+                <td>{{ request.phone_number }}</td>
+
+                <td>
+                    <span class="badge bg-secondary">
+                        {{ request.status }}
+                    </span>
+                </td>
+
+                <td>
+
+                    <a href="{% url 'accept_request' request.id %}"
+                       class="btn btn-success btn-sm">
+
+                        Accept
+
+                    </a>
+
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+        <div class="alert alert-info">
+
+            No new rescue requests available.
+
+        </div>
+
+    {% endif %}
+
+    <hr>
+
+    <h4 class="mt-5">
+
+        My Jobs
+
+    </h4>
+
+    {% if my_jobs %}
+
+    <table class="table table-bordered table-hover">
+
+        <thead class="table-primary">
+
+            <tr>
+
+                <th>Customer</th>
+
+                <th>Problem</th>
+
+                <th>Location</th>
+
+                <th>Phone</th>
+
+                <th>Status</th>
+
+                <th>Action</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for job in my_jobs %}
+
+            <tr>
+
+                <td>{{ job.customer.username }}</td>
+
+                <td>{{ job.vehicle_problem }}</td>
+
+                <td>{{ job.location }}</td>
+
+                <td>{{ job.phone_number }}</td>
+
+                <td>
+
+                    {% if job.status == "accepted" %}
+                        <span class="badge bg-primary">Accepted</span>
+
+                    {% elif job.status == "on_the_way" %}
+                        <span class="badge bg-warning text-dark">
+                            On The Way
+                        </span>
+
+                    {% elif job.status == "arrived" %}
+                        <span class="badge bg-info">
+                            Arrived
+                        </span>
+
+                    {% elif job.status == "completed" %}
+                        <span class="badge bg-success">
+                            Completed
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+
+                    {% if job.status == "accepted" %}
+
+                        <a href="{% url 'start_trip' job.id %}"
+                           class="btn btn-primary btn-sm">
+
+                            Start Trip
+
+                        </a>
+
+                    {% elif job.status == "on_the_way" %}
+
+                        <a href="{% url 'mark_arrived' job.id %}"
+                           class="btn btn-warning btn-sm">
+
+                            Arrived
+
+                        </a>
+
+                    {% elif job.status == "arrived" %}
+
+                        <a href="{% url 'complete_job' job.id %}"
+                           class="btn btn-success btn-sm">
+
+                            Complete
+
+                        </a>
+
+                    {% elif job.status == "completed" %}
+
+                        <span class="badge bg-success">
+
+                            Completed
+
+                        </span>
+
+                    {% endif %}
+
+                    {% if job.mechanic and job.status != "completed" and job.status != "cancelled" %}
+
+                        <a href="{% url 'tracking' job.id %}"
+                           class="btn btn-outline-primary btn-sm">
+                            Open Map
+                        </a>
+
+                    {% endif %}
+
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+        <div class="alert alert-warning">
+
+            You have not accepted any jobs yet.
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+<script>
+
+function updateMechanicLocation(jobId) {
+
+    if (!navigator.geolocation) {
+
+        console.log("Geolocation is not supported by this browser.");
+
+        return;
+    }
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position) {
+
+            const latitude =
+                position.coords.latitude;
+
+            const longitude =
+                position.coords.longitude;
+
+
+            fetch(
+                "{% url 'update_location' 0 %}".replace(
+                    "0",
+                    jobId
+                ),
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/x-www-form-urlencoded",
+
+                        "X-CSRFToken":
+                            "{{ csrf_token }}"
+
+                    },
+
+                    body:
+
+                        "latitude=" +
+                        encodeURIComponent(latitude) +
+                        "&longitude=" +
+                        encodeURIComponent(longitude)
+
+                }
+            )
+
+            .then(response => response.json())
+
+            .then(data => {
+
+                if (data.success) {
+
+                    console.log(
+                        "Mechanic location updated:",
+                        data.latitude,
+                        data.longitude
+                    );
+
+                }
+
+                else {
+
+                    console.log(
+                        "Location update failed:",
+                        data.message
+                    );
+
+                }
+
+            })
+
+            .catch(error => {
+
+                console.log(
+                    "Location update error:",
+                    error
+                );
+
+            });
+
+        },
+
+        function(error) {
+
+            console.log(
+                "GPS error:",
+                error.message
+            );
+
+        }
+
+    );
+
+}
+
+
+{% for job in my_jobs %}
+
+{% if job.status != "completed" %}
+
+updateMechanicLocation({{ job.id }});
+
+
+setInterval(
+
+    function() {
+
+        updateMechanicLocation({{ job.id }});
+
+    },
+
+    5000
+
+);
+
+{% endif %}
+
+{% endfor %}
+
+</script>
+
+{% endblock %}

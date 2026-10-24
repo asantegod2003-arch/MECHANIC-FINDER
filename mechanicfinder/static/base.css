@@ -1,0 +1,31 @@
+body{
+    font-family:'Poppins', sans-serif;
+    background:#f8f9fa;
+}
+
+.navbar-brand{
+
+    font-weight:700;
+
+}
+
+.nav-link{
+
+    font-size:17px;
+    margin-right:15px;
+
+}
+
+.nav-link:hover{
+
+    color:#d4edda !important;
+
+}
+
+.btn{
+
+    border-radius:30px;
+
+    padding:8px 20px;
+
+}

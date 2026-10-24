@@ -1,0 +1,321 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <h2 class="text-success mb-4">
+        🚗 Live Rescue Tracking
+    </h2>
+
+
+    <div class="card shadow border-0">
+
+        <div class="card-body">
+
+            <div class="row mb-3">
+
+                <div class="col-md-4">
+
+                    <strong>Customer:</strong>
+
+                    {{ rescue_request.customer.username }}
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <strong>Mechanic:</strong>
+
+                    {% if rescue_request.mechanic %}
+
+                        {{ rescue_request.mechanic.username }}
+
+                    {% else %}
+
+                        Waiting for mechanic
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <strong>Status:</strong>
+
+                    <span id="status">
+
+                        {{ rescue_request.status }}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="tracking-status"
+                class="alert alert-info">
+
+                📡 Waiting for mechanic location...
+
+            </div>
+
+
+            <div
+                id="map"
+                style="
+                    height:600px;
+                    width:100%;
+                    border-radius:12px;
+                ">
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let map;
+
+let customerMarker;
+
+let mechanicMarker;
+
+let directionsService;
+
+let directionsRenderer;
+
+
+function initMap() {
+
+    const customerLat = Number("{{ rescue_request.customer_latitude|default_if_none:'' }}");
+    const customerLng = Number("{{ rescue_request.customer_longitude|default_if_none:'' }}");
+
+    const customer = {
+
+        lat: Number.isFinite(customerLat) ? customerLat : 5.6037,
+
+        lng: Number.isFinite(customerLng) ? customerLng : -0.1870
+
+    };
+
+
+    map = new google.maps.Map(
+
+        document.getElementById("map"),
+
+        {
+
+            zoom: 14,
+
+            center: customer
+
+        }
+
+    );
+
+
+    directionsService =
+        new google.maps.DirectionsService();
+
+
+    directionsRenderer =
+        new google.maps.DirectionsRenderer({
+
+            map: map,
+
+            suppressMarkers: true
+
+        });
+
+
+    customerMarker =
+        new google.maps.Marker({
+
+            position: customer,
+
+            map: map,
+
+            title: "Customer",
+
+            icon:
+                "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+
+        });
+
+
+    updateMechanicLocation();
+
+}
+
+
+function updateMechanicLocation() {
+
+    fetch(
+        "{% url 'mechanic_location' rescue_request.id %}"
+    )
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        if (!data.success) {
+            return;
+        }
+
+
+        document.getElementById("status").innerText =
+            data.status;
+
+
+        if (
+            data.latitude === null ||
+            data.longitude === null
+        ) {
+
+            document.getElementById(
+                "tracking-status"
+            ).innerHTML =
+                "📡 Waiting for mechanic GPS location...";
+
+            return;
+
+        }
+
+
+        const mechanic = {
+
+            lat: Number(data.latitude),
+
+            lng: Number(data.longitude)
+
+        };
+
+
+        if (!mechanicMarker) {
+
+            mechanicMarker =
+                new google.maps.Marker({
+
+                    position: mechanic,
+
+                    map: map,
+
+                    title: "Mechanic",
+
+                    icon:
+                        "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+
+                });
+
+        }
+
+        else {
+
+            mechanicMarker.setPosition(
+                mechanic
+            );
+
+        }
+
+
+        document.getElementById(
+            "tracking-status"
+        ).className =
+            "alert alert-success";
+
+
+        document.getElementById(
+            "tracking-status"
+        ).innerHTML =
+            "🔧 Mechanic location updated";
+
+
+        drawRoute(mechanic);
+
+    })
+
+    .catch(error => {
+
+        console.log(
+            "Tracking error:",
+            error
+        );
+
+    });
+
+}
+
+
+function drawRoute(mechanic) {
+
+    const customerLat = Number("{{ rescue_request.customer_latitude|default_if_none:'' }}");
+    const customerLng = Number("{{ rescue_request.customer_longitude|default_if_none:'' }}");
+
+    if (!Number.isFinite(customerLat) || !Number.isFinite(customerLng)) {
+        return;
+    }
+
+    const customer = {
+        lat: customerLat,
+        lng: customerLng
+    };
+
+
+    directionsService.route(
+
+        {
+
+            origin: mechanic,
+
+            destination: customer,
+
+            travelMode:
+                google.maps.TravelMode.DRIVING
+
+        },
+
+        function(result, status) {
+
+            if (
+                status ===
+                google.maps.DirectionsStatus.OK
+            ) {
+
+                directionsRenderer.setDirections(
+                    result
+                );
+
+            }
+
+        }
+
+    );
+
+}
+
+
+// Update every 5 seconds
+
+setInterval(
+    updateMechanicLocation,
+    5000
+);
+
+</script>
+
+
+<script
+    async
+    src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initMap">
+</script>
+
+{% endblock %}
